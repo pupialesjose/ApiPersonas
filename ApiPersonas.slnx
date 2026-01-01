@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ApiPersonas/ApiPersonas.csproj" />
+  <Project Path="PersonaApi.Test/PersonaApi.Test.csproj" Id="bc188328-3825-412f-9997-b93b3f602542" />
+</Solution>
