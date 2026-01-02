@@ -1,7 +1,8 @@
-# Nombre del workflow que se ver· en GitHub Actions
+Ôªø
+# Nombre del workflow que se ver√° en GitHub Actions
 name: CI Pipeline
 
-# Eventos que disparan la ejecuciÛn del pipeline
+# Eventos que disparan la ejecuci√≥n del pipeline
 on:
   # Se ejecuta cuando hay un push a la rama master
   push:
@@ -11,35 +12,57 @@ on:
   pull_request:
     branches: [ "master" ]
 
-# DefiniciÛn de los trabajos (jobs) del workflow
+# Definici√≥n de los trabajos (jobs) del workflow
 jobs:
-  # Job principal de integraciÛn continua
+  # Job principal de integraci√≥n continua
   build-and-test:
-    # Sistema operativo de la m·quina virtual que ejecuta el job
+    # Sistema operativo de la m√°quina virtual que ejecuta el job
     runs-on: ubuntu-latest
 
     # Pasos que se ejecutan secuencialmente
     steps:
 
-      # Paso 1: Clonar el repositorio en la m·quina del runner
+      # Paso 1: Clonar el repositorio en la m√°quina del runner
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Paso 2: Instalar la versiÛn de .NET necesaria para el proyecto
+      # Paso 2: Instalar la versi√≥n de .NET necesaria para el proyecto
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          # Usamos .NET 8 porque la API est· desarrollada con esta versiÛn
+          # Usamos .NET 8 porque la API est√° desarrollada con esta versi√≥n
           dotnet-version: '8.0.x'
 
       # Paso 3: Restaurar dependencias NuGet
       - name: Restore dependencies
         run: dotnet restore
 
-      # Paso 4: Compilar la soluciÛn sin restaurar nuevamente
+      # Paso 4: Compilar la soluci√≥n sin restaurar nuevamente
       - name: Build solution
         run: dotnet build --no-restore
 
-      # Paso 5: Ejecutar pruebas unitarias e integraciÛn
+      # Paso 5: Ejecutar pruebas unitarias e integraci√≥n
       - name: Run tests
         run: dotnet test --no-build --verbosity normal
+
+      # -------------------------------
+      # CD: Build & Push Docker Image
+      # -------------------------------
+
+      # 6Ô∏è Login en Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 7Ô∏è Construir y subir la imagen
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ApiPersonas
+          file: ./ApiPersonas/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/apipersonas:latest
+            ${{ secrets.DOCKER_USERNAME }}/apipersonas:${{ github.sha }}
