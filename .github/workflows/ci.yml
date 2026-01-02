@@ -1,5 +1,4 @@
-﻿
-# Nombre del workflow que se verá en GitHub Actions
+﻿# Nombre del workflow que se verá en GitHub Actions
 name: CI Pipeline
 
 # Eventos que disparan la ejecución del pipeline
